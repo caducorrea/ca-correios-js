@@ -1,0 +1,26 @@
+{
+  "name": "ca-correios-js",
+  "version": "1.0.0",
+  "description": "Package JS to connect with Correios WS",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test-unit",
+    "test-unit": "mocha tests/unit/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caducorrea/ca-correios-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caducorrea/ca-correios-js/issues"
+  },
+  "homepage": "https://github.com/caducorrea/ca-correios-js#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}
