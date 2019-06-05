@@ -1,3 +1,6 @@
+/* eslint no-param-reassign: "error" */
+/* eslint prefer-destructuring: ["error", {VariableDeclarator: {object: true}}] */
+
 import fetch from 'isomorphic-unfetch';
 
 function wrapperEnvelope(cep) {
@@ -13,6 +16,42 @@ function wrapperEnvelope(cep) {
   return envelope;
 }
 
+function parseXMLResponse(xmlString) {
+  try {
+    const returnStatement = xmlString.replace(/\r?\n|\r/g, '').match(/<return>(.*)<\/return>/)[0] || '';
+    const cleanReturnStatement = returnStatement.replace('<return>', '').replace('</return>', '');
+    const parsedReturnStatement = cleanReturnStatement
+      .split(/</)
+      .reduce((result, exp) => {
+        const splittenExp = exp.split('>');
+        if (splittenExp.length > 1 && splittenExp[1].length) {
+          result[splittenExp[0]] = splittenExp[1];
+        }
+        return result;
+      }, {});
+
+    return parsedReturnStatement;
+  } catch (e) {
+    throw new Error('Não foi possível interpretar o XML de resposta.');
+  }
+}
+
+function extractValuesFromSuccessResponse(xmlObject) {
+  return {
+    cep: xmlObject.cep,
+    state: xmlObject.uf,
+    city: xmlObject.cidade,
+    neighborhood: xmlObject.bairro,
+    street: xmlObject.end,
+  };
+}
+
+function parseResponse(response) {
+  return response.text()
+    .then(parseXMLResponse)
+    .then(extractValuesFromSuccessResponse);
+}
+
 export default function fetchCorreiosCepService(cepNumber) {
   const url = 'https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente';
   const options = {
@@ -25,5 +64,6 @@ export default function fetchCorreiosCepService(cepNumber) {
   };
 
   return fetch(url, options)
-    .then(response => response);
+    .then(parseResponse)
+    .catch();
 }

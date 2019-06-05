@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { Cep } from '../../src/correios';
+import { Track } from '../../src/correios';
 
-describe('Cep (unit)', () => {
+describe('Track (unit)', () => {
   describe('when imported', () => {
     it('should return a function', () => {
-      expect(Cep).to.be.a('function');
+      expect(Track).to.be.a('function');
     });
   });
 });
