@@ -2,6 +2,7 @@
 /* eslint prefer-destructuring: ["error", {VariableDeclarator: {object: true}}] */
 
 import fetch from 'isomorphic-unfetch';
+import ServiceError from '../errors/service';
 
 function wrapperEnvelope(cep) {
   const envelope = `<?xml version="1.0"?>\n
@@ -52,6 +53,12 @@ function parseResponse(response) {
     .then(extractValuesFromSuccessResponse);
 }
 
+function throwServiceError(error) {
+  const serviceError = new ServiceError(error, 'Correios - CEP');
+
+  throw serviceError;
+}
+
 export default function fetchCorreiosCepService(cepNumber) {
   const url = 'https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente';
   const options = {
@@ -65,5 +72,5 @@ export default function fetchCorreiosCepService(cepNumber) {
 
   return fetch(url, options)
     .then(parseResponse)
-    .catch();
+    .catch(throwServiceError);
 }

@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-unfetch';
+import ServiceError from '../errors/service';
 
 function wrapperEnvelope(cep) {
   const envelope = `<?xml version="1.0"?>\n
@@ -13,6 +14,13 @@ function wrapperEnvelope(cep) {
   return envelope;
 }
 
+function throwServiceError(error) {
+  const serviceError = new ServiceError(error, 'Correios - CEP');
+
+  throw serviceError;
+}
+
+
 export default function fetchCorreiosTrackService(trackNumber) {
   const url = 'https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente';
   const options = {
@@ -25,5 +33,6 @@ export default function fetchCorreiosTrackService(trackNumber) {
   };
 
   return fetch(url, options)
-    .then(response => response);
+    .then(response => response)
+    .catch(throwServiceError);
 }
